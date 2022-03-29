@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import com.ethicalml.kompute.databinding.ActivityKomputeJniBinding
+import com.ethicalml.kompute.models.Particle
 
 class KomputeJni : AppCompatActivity() {
 
@@ -36,7 +37,11 @@ class KomputeJni : AppCompatActivity() {
     }
 
     fun KomputeButtonOnClick(v: View) {
-
+        val p = Particle(1.0f, 1.0f)
+        val pTwo = Particle(1.5f, 1.5f)
+        val particles = arrayOf(p, pTwo)
+        val t = particleTest(particles, 2)
+        Log.d("TESTING" , "${t}")
         val xiEditText = findViewById<EditText>(R.id.XIEditText)
         val xjEditText = findViewById<EditText>(R.id.XJEditText)
         val yEditText = findViewById<EditText>(R.id.YEditText)
@@ -68,11 +73,14 @@ class KomputeJni : AppCompatActivity() {
         biasEditText.text = params[2].toString()
     }
 
+
     external fun initVulkan(): Boolean
 
     external fun kompute(xi: FloatArray, xj: FloatArray, y: FloatArray): FloatArray
 
     external fun komputeParams(xi: FloatArray, xj: FloatArray, y: FloatArray): FloatArray
+
+    external fun particleTest(p: Array<Particle>, pTwo: Int) : Float
 
     companion object {
         init {

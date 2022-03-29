@@ -10,9 +10,16 @@
 
 class KomputeModelML {
 
+    struct Particle {
+        float x;
+        float y;
+    };
+
 public:
     KomputeModelML();
     virtual ~KomputeModelML();
+
+    void test(std::vector<Particle> particle);
 
     void train(std::vector<float> yData, std::vector<float> xIData, std::vector<float> xJData);
 
@@ -23,6 +30,7 @@ public:
 private:
     std::vector<float> mWeights;
     std::vector<float> mBias;
+
 
 };
 

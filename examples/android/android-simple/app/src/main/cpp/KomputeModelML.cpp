@@ -1,12 +1,21 @@
 
 #include "KomputeModelML.hpp"
 
+struct Particle {
+    float x;
+    float y;
+};
+
 KomputeModelML::KomputeModelML() {
 
 }
 
 KomputeModelML::~KomputeModelML() {
 
+}
+
+void KomputeModelML::test(std::vector<Particle>){
+    KP_LOG_INFO("RESULT: MADE IT HERE");
 }
 
 void KomputeModelML::train(std::vector<float> yData, std::vector<float> xIData, std::vector<float> xJData) {
@@ -22,7 +31,6 @@ void KomputeModelML::train(std::vector<float> yData, std::vector<float> xIData, 
 
     {
         kp::Manager mgr;
-
         std::shared_ptr<kp::TensorT<float>> xI = mgr.tensor(xIData);
         std::shared_ptr<kp::TensorT<float>> xJ = mgr.tensor(xJData);
 
@@ -69,7 +77,7 @@ void KomputeModelML::train(std::vector<float> yData, std::vector<float> xIData, 
             }
         }
 
-        KP_LOG_INFO("RESULT: <<<<<<<<<<<<<<<<<<<");
+        KP_LOG_INFO("RESULT HERE: <<<<<<<<<<<<<<<<<<<");
         KP_LOG_INFO("{}", wIn->data()[0]);
         KP_LOG_INFO("{}", wIn->data()[1]);
         KP_LOG_INFO("{}", bIn->data()[0]);

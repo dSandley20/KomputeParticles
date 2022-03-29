@@ -30,6 +30,12 @@
 #define KOMPUTE_VK_INIT_RETRIES 5
 #endif
 
+
+struct Particle {
+    float x;
+    float y;
+};
+
 static std::vector<float> jfloatArrayToVector(JNIEnv *env, const jfloatArray & fromArray) {
     float *inCArray = env->GetFloatArrayElements(fromArray, NULL);
     if (NULL == inCArray) return std::vector<float>();
@@ -44,6 +50,28 @@ static jfloatArray vectorToJFloatArray(JNIEnv *env, const std::vector<float> & f
     if (NULL == ret) return NULL;
     env->SetFloatArrayRegion(ret, 0, fromVector.size(), fromVector.data());
     return ret;
+}
+
+static std::vector<Particle> jsobjectToParticleVector(JNIEnv *env,  jobjectArray p, jint size){
+
+    //setting up ids and classes to be able to reference data
+    jclass clazz = env->FindClass("com/ethicalml/kompute/models/Particle");
+    jfieldID fieldX = env->GetFieldID(clazz, "x", "F");
+    jfieldID fieldY = env->GetFieldID(clazz, "y", "F");
+    // n serves as an offset of the
+    std::vector<Particle> outVector(0);
+    for(int i = 0; i < size; i++){
+        jobject  current = (jobject) env->GetObjectArrayElement(p, i);
+        Particle temp;
+        temp.x = env->GetFloatField(current, fieldX);
+        temp.y = env->GetFloatField(current, fieldY);
+        outVector.push_back(temp);
+    }
+    return outVector;
+}
+
+static Particle particleVectorReturn(JNIEnv *env, const std::vector<Particle> & fromVector){
+    return fromVector[0];
 }
 
 extern "C" {
@@ -112,4 +140,21 @@ Java_com_ethicalml_kompute_KomputeJni_komputeParams(
     return vectorToJFloatArray(env, params);
 }
 
+}
+
+extern "C"
+JNIEXPORT float JNICALL
+Java_com_ethicalml_kompute_KomputeJni_particleTest(JNIEnv *env,
+                                                   jobject thiz,
+                                                   jobjectArray p,
+                                                   jint size) {
+
+    std::vector<Particle> particleVector = jsobjectToParticleVector(env, p , size);
+
+    //NOTE the first spot does not contain any data
+    //return particleVector[0].x;
+    return particleVector.size();
+    //return size;
+
+//    return particleVectorReturn(env, particleVector).x;
 }
