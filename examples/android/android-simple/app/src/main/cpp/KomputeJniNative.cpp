@@ -35,6 +35,9 @@ struct Particle {
     float x;
     float y;
 };
+// n serves as an offset of the vectors
+std::vector<float> xValueParticles(0);
+std::vector<float> yValueParticles(0);
 
 static std::vector<float> jfloatArrayToVector(JNIEnv *env, const jfloatArray & fromArray) {
     float *inCArray = env->GetFloatArrayElements(fromArray, NULL);
@@ -52,22 +55,29 @@ static jfloatArray vectorToJFloatArray(JNIEnv *env, const std::vector<float> & f
     return ret;
 }
 
-static std::vector<Particle> jsobjectToParticleVector(JNIEnv *env,  jobjectArray p, jint size){
+static jfloatArray getParticleData(JNIEnv *env, jint index){
+    std::vector<float> tempValues(0);
+    tempValues.push_back(xValueParticles[index]);
+    tempValues.push_back(yValueParticles[index]);
+    jfloatArray ret = env->NewFloatArray(tempValues.size());
+    if (NULL == ret) return NULL;
+    env->SetFloatArrayRegion(ret, 0, tempValues.size(), tempValues.data());
+    return ret;
+}
+
+static void jsobjectToParticleVector(JNIEnv *env,  jobjectArray p, jint size){
 
     //setting up ids and classes to be able to reference data
     jclass clazz = env->FindClass("com/ethicalml/kompute/models/Particle");
     jfieldID fieldX = env->GetFieldID(clazz, "x", "F");
     jfieldID fieldY = env->GetFieldID(clazz, "y", "F");
-    // n serves as an offset of the
-    std::vector<Particle> outVector(0);
+
     for(int i = 0; i < size; i++){
-        jobject  current = (jobject) env->GetObjectArrayElement(p, i);
-        Particle temp;
-        temp.x = env->GetFloatField(current, fieldX);
-        temp.y = env->GetFloatField(current, fieldY);
-        outVector.push_back(temp);
+        jobject current = (jobject) env->GetObjectArrayElement(p, i);
+        xValueParticles.push_back(env->GetFloatField(current, fieldX));
+        yValueParticles.push_back(env->GetFloatField(current, fieldY));
     }
-    return outVector;
+
 }
 
 static Particle particleVectorReturn(JNIEnv *env, const std::vector<Particle> & fromVector){
@@ -143,18 +153,18 @@ Java_com_ethicalml_kompute_KomputeJni_komputeParams(
 }
 
 extern "C"
-JNIEXPORT float JNICALL
+JNIEXPORT jfloatArray JNICALL
 Java_com_ethicalml_kompute_KomputeJni_particleTest(JNIEnv *env,
                                                    jobject thiz,
                                                    jobjectArray p,
                                                    jint size) {
+    jsobjectToParticleVector(env, p , size);
+    /*
+     * 0 - x
+     * 1 - y
+     */
 
-    std::vector<Particle> particleVector = jsobjectToParticleVector(env, p , size);
-
-    //NOTE the first spot does not contain any data
-    //return particleVector[0].x;
-    return particleVector.size();
-    //return size;
-
-//    return particleVectorReturn(env, particleVector).x;
+    KomputeModelML kml;
+    kml.test(xValueParticles, yValueParticles);
+    return  getParticleData(env, 0);
 }

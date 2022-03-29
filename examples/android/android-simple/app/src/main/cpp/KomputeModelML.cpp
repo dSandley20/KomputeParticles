@@ -14,8 +14,21 @@ KomputeModelML::~KomputeModelML() {
 
 }
 
-void KomputeModelML::test(std::vector<Particle>){
+void KomputeModelML::test(std::vector<float>& particleDataX, std::vector<float>& particleDataY){
     KP_LOG_INFO("RESULT: MADE IT HERE");
+    std::vector<float> zerosData;
+
+    for (size_t i = 0; i < particleDataX.size(); i++) {
+        zerosData.push_back(0);
+    }
+
+    {
+        kp::Manager mgr;
+        std::shared_ptr<kp::TensorT<float>> xValues = mgr.tensor(particleDataX);
+        std::shared_ptr<kp::TensorT<float>> yValues = mgr.tensor(particleDataY);
+        std::shared_ptr<kp::TensorT<float>> wOutI = mgr.tensor(zerosData);
+        std::shared_ptr<kp::TensorT<float>> wOutJ = mgr.tensor(zerosData);
+    }
 }
 
 void KomputeModelML::train(std::vector<float> yData, std::vector<float> xIData, std::vector<float> xJData) {

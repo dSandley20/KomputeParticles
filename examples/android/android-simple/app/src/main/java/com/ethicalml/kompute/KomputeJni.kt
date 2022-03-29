@@ -41,46 +41,14 @@ class KomputeJni : AppCompatActivity() {
         val pTwo = Particle(1.5f, 1.5f)
         val particles = arrayOf(p, pTwo)
         val t = particleTest(particles, 2)
-        Log.d("TESTING" , "${t}")
-        val xiEditText = findViewById<EditText>(R.id.XIEditText)
-        val xjEditText = findViewById<EditText>(R.id.XJEditText)
-        val yEditText = findViewById<EditText>(R.id.YEditText)
-
-        val wOneEditText = findViewById<TextView>(R.id.wOneTextView)
-        val wTwoEditText = findViewById<TextView>(R.id.wTwoTextView)
-        val biasEditText = findViewById<TextView>(R.id.biasTextView)
-
-        val komputeJniTextview = findViewById<TextView>(R.id.predictionTextView)
-
-        val xi = xiEditText.text.removeSurrounding("[", "]").split(",").map { it.toFloat() }.toFloatArray()
-        val xj = xjEditText.text.removeSurrounding("[", "]").split(",").map { it.toFloat() }.toFloatArray()
-        val y = yEditText.text.removeSurrounding("[", "]").split(",").map { it.toFloat() }.toFloatArray()
-
-        val out = kompute(xi, xj, y)
-
-        Log.i("KomputeJni", "RESULT:")
-        Log.i("KomputeJni", out.contentToString())
-
-        komputeJniTextview.text = out.contentToString()
-
-        val params = komputeParams(xi, xj, y)
-
-        Log.i("KomputeJni", "Params:")
-        Log.i("KomputeJni", params.contentToString())
-
-        wOneEditText.text = params[0].toString()
-        wTwoEditText.text = params[1].toString()
-        biasEditText.text = params[2].toString()
+        Log.d("TESTING" , "${t[0]} ${t[1]}")
     }
 
 
     external fun initVulkan(): Boolean
 
-    external fun kompute(xi: FloatArray, xj: FloatArray, y: FloatArray): FloatArray
 
-    external fun komputeParams(xi: FloatArray, xj: FloatArray, y: FloatArray): FloatArray
-
-    external fun particleTest(p: Array<Particle>, pTwo: Int) : Float
+    external fun particleTest(p: Array<Particle>, pTwo: Int) : FloatArray
 
     companion object {
         init {

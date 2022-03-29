@@ -19,7 +19,7 @@ public:
     KomputeModelML();
     virtual ~KomputeModelML();
 
-    void test(std::vector<Particle> particle);
+    void test(std::vector<float>& particleDataX, std::vector<float>& particleDataY);
 
     void train(std::vector<float> yData, std::vector<float> xIData, std::vector<float> xJData);
 
